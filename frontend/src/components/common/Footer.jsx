@@ -31,7 +31,7 @@ const Footer = () => {
             <h4 style={{ fontSize: '1rem', marginBottom: '15px', color: 'var(--text-primary)' }}>For Candidates</h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '0.9rem' }}>
               <li><Link to="/jobs" style={{ color: 'var(--text-secondary)' }}>Browse Jobs</Link></li>
-              <li><Link to="/dashboard/candidate" style={{ color: 'var(--text-secondary)' }}>Applied Jobs</Link></li>
+              <li><Link to="/dashboard/candidate/applied" style={{ color: 'var(--text-secondary)' }}>Applied Jobs</Link></li>
               <li><Link to="/profile" style={{ color: 'var(--text-secondary)' }}>My Profile</Link></li>
             </ul>
           </div>

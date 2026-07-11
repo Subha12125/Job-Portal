@@ -2,7 +2,10 @@ import axiosInstance from './axios';
 
 export const applicationApi = {
   applyToJob: async (applicationData) => {
-    const response = await axiosInstance.post('/application', applicationData);
+    const headers = applicationData instanceof FormData
+      ? { 'Content-Type': undefined }
+      : {};
+    const response = await axiosInstance.post('/application', applicationData, { headers });
     return response.data;
   },
 

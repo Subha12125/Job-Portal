@@ -2,8 +2,11 @@ import axiosInstance from './axios';
 
 export const jobApi = {
   getAllJobs: async (filters = {}) => {
-    const params = new URLSearchParams(filters).toString();
-    const response = await axiosInstance.get(`/job?${params}`);
+    const filtered = Object.fromEntries(
+      Object.entries(filters).filter(([_, v]) => v !== undefined && v !== null && v !== '')
+    );
+    const params = new URLSearchParams(filtered).toString();
+    const response = await axiosInstance.get(params ? `/job?${params}` : '/job');
     return response.data;
   },
 

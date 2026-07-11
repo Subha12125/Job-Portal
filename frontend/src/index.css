@@ -308,6 +308,12 @@ img {
   .title-lg { font-size: 1.75rem; }
 }
 
+/* Navbar responsive – hide desktop menu, show hamburger on mobile */
+@media (max-width: 768px) {
+  .desktop-menu { display: none !important; }
+  .mobile-menu-trigger { display: flex !important; }
+}
+
 /* Keyframe Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }

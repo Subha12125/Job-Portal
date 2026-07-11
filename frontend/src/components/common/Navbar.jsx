@@ -84,10 +84,134 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile menu trigger */}
-        <div className="mobile-menu-trigger" style={{ display: 'none' }}>
-          {/* Handled by media query in production, CSS wraps this */}
-        </div>
+        {/* Mobile Hamburger Trigger */}
+        <button
+          className="mobile-menu-trigger"
+          onClick={() => setMobileMenuOpen(prev => !prev)}
+          aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+          aria-expanded={mobileMenuOpen}
+          style={{
+            display: 'none',          /* shown via CSS media query */
+            background: 'none',
+            border: 'none',
+            color: 'var(--text-primary)',
+            cursor: 'pointer',
+            padding: '6px',
+            borderRadius: '8px',
+          }}
+        >
+          {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+      </div>
+
+      {/* Mobile slide-out overlay backdrop */}
+      {mobileMenuOpen && (
+        <div
+          onClick={() => setMobileMenuOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            top: '70px',
+            backgroundColor: 'rgba(0,0,0,0.4)',
+            zIndex: 999,
+          }}
+          aria-hidden="true"
+        />
+      )}
+
+      {/* Mobile slide-out panel */}
+      <div
+        style={{
+          position: 'fixed',
+          top: '70px',
+          right: 0,
+          bottom: 0,
+          width: '270px',
+          backgroundColor: 'var(--surface)',
+          borderLeft: '1px solid var(--border)',
+          zIndex: 1000,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '8px',
+          padding: '24px 20px',
+          transform: mobileMenuOpen ? 'translateX(0)' : 'translateX(100%)',
+          transition: 'transform 0.28s cubic-bezier(0.4, 0, 0.2, 1)',
+          overflowY: 'auto',
+        }}
+        aria-hidden={!mobileMenuOpen}
+      >
+        <Link
+          to="/jobs"
+          onClick={() => setMobileMenuOpen(false)}
+          style={{ fontWeight: 500, color: 'var(--text-secondary)', padding: '10px 0', borderBottom: '1px solid var(--border)' }}
+        >
+          Find Jobs
+        </Link>
+
+        <button
+          onClick={() => { toggleTheme(); }}
+          style={{
+            background: 'none', border: 'none',
+            color: 'var(--text-primary)', cursor: 'pointer',
+            display: 'flex', alignItems: 'center', gap: '10px',
+            fontWeight: 500, padding: '10px 0',
+            borderBottom: '1px solid var(--border)',
+          }}
+        >
+          {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+          {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+        </button>
+
+        {isAuthenticated ? (
+          <>
+            <Link
+              to={getDashboardLink()}
+              onClick={() => setMobileMenuOpen(false)}
+              className="btn btn-secondary btn-sm"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px' }}
+            >
+              <LayoutDashboard size={16} /> Dashboard
+            </Link>
+            <Link
+              to="/profile"
+              onClick={() => setMobileMenuOpen(false)}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)', fontWeight: 500, padding: '10px 0' }}
+            >
+              {user.profileImage ? (
+                <img src={user.profileImage} alt={user.name} style={{ width: '28px', height: '28px', borderRadius: '50%', objectFit: 'cover' }} />
+              ) : (
+                <User size={18} />
+              )}
+              Profile
+            </Link>
+            <button
+              onClick={() => { setMobileMenuOpen(false); handleLogout(); }}
+              className="btn btn-danger btn-sm"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}
+            >
+              <LogOut size={16} /> Logout
+            </button>
+          </>
+        ) : (
+          <>
+            <Link
+              to="/login"
+              onClick={() => setMobileMenuOpen(false)}
+              className="btn btn-secondary btn-sm"
+              style={{ marginTop: '8px' }}
+            >
+              Log In
+            </Link>
+            <Link
+              to="/register"
+              onClick={() => setMobileMenuOpen(false)}
+              className="btn btn-primary btn-sm"
+              style={{ marginTop: '8px' }}
+            >
+              Register
+            </Link>
+          </>
+        )}
       </div>
     </nav>
   );

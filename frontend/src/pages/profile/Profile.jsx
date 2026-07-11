@@ -51,13 +51,49 @@ const Profile = () => {
   };
 
   const handleFileChange = (e, type) => {
-    if (type === 'resume') {
-      setResumeFile(e.target.files[0]);
-    } else {
-      setImageFile(e.target.files[0]);
-    }
+    const file = e.target.files[0];
+    if (!file) return;
+
     setSuccess('');
     setApiError('');
+
+    if (type === 'resume') {
+      const allowedExtensions = ['pdf', 'doc', 'docx'];
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      const maxSize = 5 * 1024 * 1024; // 5MB
+
+      if (!allowedExtensions.includes(fileExtension)) {
+        setApiError('Invalid resume file type. Only PDF, DOC, and DOCX files are allowed.');
+        e.target.value = ''; // clear input
+        setResumeFile(null);
+        return;
+      }
+      if (file.size > maxSize) {
+        setApiError('Resume size exceeds the 5MB limit.');
+        e.target.value = ''; // clear input
+        setResumeFile(null);
+        return;
+      }
+      setResumeFile(file);
+    } else {
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      const maxSize = 2 * 1024 * 1024; // 2MB
+
+      if (!allowedExtensions.includes(fileExtension)) {
+        setApiError('Invalid image file type. Only JPG, JPEG, PNG, and WEBP files are allowed.');
+        e.target.value = ''; // clear input
+        setImageFile(null);
+        return;
+      }
+      if (file.size > maxSize) {
+        setApiError('Image size exceeds the 2MB limit.');
+        e.target.value = ''; // clear input
+        setImageFile(null);
+        return;
+      }
+      setImageFile(file);
+    }
   };
 
   const handleSubmit = async (e) => {

@@ -39,7 +39,36 @@ const CompanyForm = ({ initialData, onSubmit, onCancel, loading }) => {
   };
 
   const handleFileChange = (e) => {
-    setLogoFile(e.target.files[0]);
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setErrors((prev) => ({ ...prev, companyLogo: '' }));
+
+    const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    const maxSize = 2 * 1024 * 1024; // 2MB
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      setErrors((prev) => ({
+        ...prev,
+        companyLogo: 'Invalid logo file type. Only JPG, JPEG, PNG, and WEBP files are allowed.'
+      }));
+      e.target.value = ''; // clear input
+      setLogoFile(null);
+      return;
+    }
+
+    if (file.size > maxSize) {
+      setErrors((prev) => ({
+        ...prev,
+        companyLogo: 'Logo image size exceeds the 2MB limit.'
+      }));
+      e.target.value = ''; // clear input
+      setLogoFile(null);
+      return;
+    }
+
+    setLogoFile(file);
   };
 
   const handleSubmit = (e) => {
@@ -193,6 +222,7 @@ const CompanyForm = ({ initialData, onSubmit, onCancel, loading }) => {
           accept="image/*"
           onChange={handleFileChange}
         />
+        {errors.companyLogo && <span style={{ color: 'var(--danger)', fontSize: '0.8rem' }}>{errors.companyLogo}</span>}
       </div>
 
       <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', marginTop: '10px' }}>

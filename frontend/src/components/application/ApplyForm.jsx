@@ -30,6 +30,32 @@ const ApplyForm = ({ jobId, onSubmit, onCancel, loading }) => {
     onSubmit(formData);
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setError('');
+    const allowedExtensions = ['pdf', 'doc', 'docx'];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+    const maxSize = 5 * 1024 * 1024; // 5MB
+
+    if (!allowedExtensions.includes(fileExtension)) {
+      setError('Invalid file type. Only PDF, DOC, and DOCX files are allowed.');
+      e.target.value = ''; // clear input selection
+      setResume(null);
+      return;
+    }
+
+    if (file.size > maxSize) {
+      setError('File size exceeds the 5MB limit.');
+      e.target.value = ''; // clear input selection
+      setResume(null);
+      return;
+    }
+
+    setResume(file);
+  };
+
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {error && (
@@ -66,7 +92,7 @@ const ApplyForm = ({ jobId, onSubmit, onCancel, loading }) => {
             className="form-control"
             type="file"
             accept=".pdf,.doc,.docx"
-            onChange={(e) => setResume(e.target.files[0])}
+            onChange={handleFileChange}
             required={!useProfileResume}
           />
         )}

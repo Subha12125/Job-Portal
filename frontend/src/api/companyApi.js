@@ -17,10 +17,7 @@ export const companyApi = {
   },
 
   updateCompany: async (id, companyData) => {
-    const headers = companyData instanceof FormData 
-      ? { 'Content-Type': 'multipart/form-data' }
-      : {};
-    const response = await axiosInstance.put(`/company/${id}`, companyData, { headers });
+    const response = await axiosInstance.put(`/company/${id}`, companyData);
     return response.data;
   },
 

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
 
 // Define the user schema
 // which contains the following fields ->
@@ -77,11 +78,6 @@ const userSchema = new mongoose.Schema({
         default:""
     },
 
-    bio:{
-        type:String,
-        default:""
-    },
-
     experience:{
         type:String,
         default:""
@@ -102,5 +98,24 @@ const userSchema = new mongoose.Schema({
         default:false
     },
 }, { timestamps:true });
+
+// Hash the password before saving the user
+userSchema.pre('save', async function(next) {
+    if(!this.isModified('password')) return next();
+
+    try{
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch(err){
+        return next(err);
+    }
+});
+
+userSchema.methods.comparePassword = async function(candidatePassword){
+    return await bcrypt.compare(candidatePassword, this.password);
+}
+
+
 
 export const User = mongoose.model('User', userSchema);

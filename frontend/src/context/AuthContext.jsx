@@ -81,9 +81,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
+  const logout = async () => {
+    try {
+      await authApi.logout();
+    } catch (err) {
+      // Backend call failed (network error or endpoint not yet implemented)
+      // Local cleanup still proceeds in finally
+      console.warn("Server logout failed, clearing local session:", err);
+    } finally {
+      localStorage.removeItem('token');
+      setUser(null);
+    }
   };
 
   const value = {

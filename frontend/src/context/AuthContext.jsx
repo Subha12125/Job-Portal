@@ -19,7 +19,11 @@ export const AuthProvider = ({ children }) => {
           setUser(data.user || data);
         } catch (err) {
           console.error("Auth check failed:", err);
-          logout();
+          const status = err.response?.status;
+          if (status === 401 || status === 403) {
+            logout();
+          }
+          // For network/server/transient errors, keep the user authenticated
         }
       }
       setLoading(false);

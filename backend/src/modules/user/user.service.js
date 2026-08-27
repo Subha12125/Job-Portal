@@ -1,47 +1,70 @@
-import {User} from "./user.model.js";
+// Import the User model schema to perform MongoDB queries
+import { User } from './user.model.js';
 
-// 1. Create a new user 
-// Steps : 1. Validate the request body
-//         2. Check if the user already exists
-//         3. Create a new user
+/**
+ * Service: Creates a new user record in the database.
+ * Checks for mandatory fields and ensures email uniqueness.
+ */
+export const createUser = async (userData) => {
+  // Validate basic required credentials
+  if (!userData.name || !userData.email || !userData.password || !userData.phone) {
+    throw new Error('Please provide all required fields');
+  }
 
-const createUser = async (userData) => {
-    // Validate the request body
-    if (!userData.name || !userData.email || !userData.password || !userData.phone) {
-        throw new Error("Please provide all required fields");
-    }
+  // Ensure no duplicate user exists with the same email
+  const existingUser = await User.findOne({ email: userData.email });
+  if (existingUser) {
+    throw new Error('User with this email already exists');
+  }
 
-    // Check if the user already exists
-    const existingUser = await User.findOne({ email: userData.email });
-    if (existingUser) {
-        throw new Error("User with this email already exists");
-    }
+  // Save the new user document (password will automatically be hashed by Mongoose pre-save hook)
+  const user = await User.create(userData);
 
-    // Create a new user
-    const user = User.create(userData);
-
-    // Return user without password
-    return await User.findById(user._id).select("-password");
+  // Return the newly created user without exposing the password hash
+  return await User.findById(user._id).select('-password');
 };
 
-// 2. Get a user by email
-const getUserByEmail = async (email) => {
-    const user = await User.findOne({ email }).select("+password");
-    return user;
-}
-
-// 3. Get a user by id
-const getUserById = async (id) => {
-    const user = await User.findOne(id).select("-password");
-    
-    if(!user) throw new Error("User not exits");
-
-    return user;
+/**
+ * Service: Retrieves a user by their email address.
+ */
+export const getUserByEmail = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) throw new Error('User not found');
+  return user;
 };
 
-// 4. Get ALL users
-const getAllUsers = async ()=>{
-    return await User.find().select("-password");
+/**
+ * Service: Retrieves a user by their unique database ID.
+ * Omits the password field for security.
+ */
+export const getUserById = async (id) => {
+  const user = await User.findById(id).select('-password');
+  if (!user) throw new Error('User not found');
+  return user;
 };
 
+/**
+ * Service: Retrieves all registered users from the system.
+ */
+export const getAllUsers = async () => {
+  return await User.find().select('-password');
+};
+
+/**
+ * Service: Updates profile fields for a user.
+ * Strips password field to prevent unauthorized password overwrites.
+ */
+export const updateUserProfile = async (userId, updateData) => {
+  // Prevent password updates through general profile update calls
+  delete updateData.password;
+
+  // Find user by ID and apply new fields, returning the updated document
+  const user = await User.findByIdAndUpdate(userId, updateData, {
+    new: true,
+    runValidators: true,
+  }).select('-password');
+
+  if (!user) throw new Error('User not found');
+  return user;
+};
 

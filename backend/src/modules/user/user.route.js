@@ -1,8 +1,19 @@
-import { createUserController, getUserByIdController, getUserByEmailController, getAllUsersController } from './user.controller.js';
+import express from 'express';
+import {
+  createUserController,
+  getUserByIdController,
+  getUserByEmailController,
+  getAllUsersController,
+  updateProfileController,
+} from './user.controller.js';
+import { protect } from '../../middlewares/auth.middleware.js';
 
-const userRoutes = (app) => {
-    app.post("/api/users", createUserController);
-    app.get("/api/users/:id", getUserByIdController);
-    app.get("/api/users/email/:email", getUserByEmailController);
-    app.get("/api/users", getAllUsersController);
-}
+const router = express.Router();
+
+router.put('/profile', protect, updateProfileController);
+router.get('/all', getAllUsersController);
+router.get('/email/:email', getUserByEmailController);
+router.get('/:id', getUserByIdController);
+router.post('/', createUserController);
+
+export default router;

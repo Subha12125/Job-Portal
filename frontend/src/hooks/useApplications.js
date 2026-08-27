@@ -13,7 +13,9 @@ export const useApplications = () => {
       const data = await applicationApi.getCandidateApplications();
       setApplications(data.applications || data);
     } catch (err) {
+      setApplications([]);
       setError(err.response?.data?.message || 'Error fetching applications');
+      throw err;
     } finally {
       setLoading(false);
     }

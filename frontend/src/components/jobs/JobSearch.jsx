@@ -19,6 +19,7 @@ const JobSearch = ({ keyword, location, onKeywordChange, onLocationChange, onSub
         <Search size={18} style={{ color: 'var(--text-secondary)' }} />
         <input
           type="text"
+          aria-label="Search by job title, skills, or keywords"
           placeholder="Search job title, skills, keywords..."
           value={keyword}
           onChange={(e) => onKeywordChange(e.target.value)}
@@ -32,6 +33,7 @@ const JobSearch = ({ keyword, location, onKeywordChange, onLocationChange, onSub
         <MapPin size={18} style={{ color: 'var(--text-secondary)' }} />
         <input
           type="text"
+          aria-label="Filter by location, city, or remote"
           placeholder="Location (city, remote)..."
           value={location}
           onChange={(e) => onLocationChange(e.target.value)}
